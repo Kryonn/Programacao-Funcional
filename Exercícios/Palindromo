@@ -1,0 +1,12 @@
+main = do 
+    str <- getLine
+    putStrLn $ printa $ ehpalindromo str 
+    
+ehpalindromo :: String -> Bool
+ehpalindromo str = all(\(x,y) -> x==y) [(str !! i, str !! (len - i - 1)) | i <- [0..(len `div` 2)]]
+    where len = length str
+    
+printa :: Bool -> String
+printa bol
+    | bol == False = "Não é palindromo"
+    | otherwise = "É palindromo"
