@@ -5,8 +5,10 @@ Programação funcional é um paradigma de programação baseado em funções pu
 ## Classes de tipos
 
 Essa categoria se refere a um conjunto de tipos que possuem uma característica em comum.
-
-
+* Eq - Tipos que suportam igualdade ou desigualdade
+* Ord - Tipos ordenáveis
+* Num - Tipos numéricos
+* Show - Tipos que podem ser convertidos para string
 
 ## Funções
 
@@ -17,6 +19,37 @@ Recebe uma lista de números e retorna a soma dos elementos da lista.
 soma :: Num a => [a] -> a
 soma [] = 0
 soma (x:xs) = x + soma xs
+```
+
+### Função filtra
+
+Recebe uma condição, uma lista e retorna os valores da lista que satifazem a condição.
+```haskell
+filtra :: (a -> Bool) -> [a] -> [a]
+filtra _ [] = []
+filtra teste (x:xs)
+    | teste x = x:filtra teste xs
+    | otherwise = filtra teste xs
+```
+
+### Função mapa
+
+Recebe uma função, uma lista e retorna a função aplicada em todos os elementos da lista.
+```haskell
+mapa :: (a -> b) -> [a] -> [b]
+mapa _ [] = []
+mapa f (x:xs) = f x:mapa f xs
+```
+
+### Função pertence
+
+Recebe um número, uma lista e retorna um valor booleano que indica se o número está na lista.
+```haskell
+pertence :: (Eq a) => a -> [a] -> Bool
+pertence _ [] = False
+pertence e (x:xs)
+    | x == e = True
+    | otherwise = pertence e xs
 ```
 
 ## Atividades
