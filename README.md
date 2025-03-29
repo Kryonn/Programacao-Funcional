@@ -52,6 +52,42 @@ pertence e (x:xs)
     | otherwise = pertence e xs
 ```
 
+Teste
+```haskell
+main = do
+    putStrLn "HW"
+    putStrLn $ show $ 6 =-=-= 7
+    putStrLn $ show list
+    putStrLn $ show $ soma list
+    putStrLn $ show $ filtra (>=5) list
+    putStrLn $ show $ pertence 5 list
+    putStrLn $ show $ mapa (*2) list
+    
+    
+a =-=-= b = a + 2 * b
+list = [1,5,3,2,8]
+
+pertence :: (Eq a) => a -> [a] -> Bool
+pertence _ [] = False
+pertence e (x:xs)
+    | x == e = True
+    | otherwise = pertence e xs
+
+filtra :: (a -> Bool) -> [a] -> [a]
+filtra _ [] = []
+filtra teste (x:xs)
+    | teste x = x:filtra teste xs
+    | otherwise = filtra teste xs
+    
+soma :: Num a => [a] -> a
+soma [] = 0
+soma (x:xs) = x + soma xs
+
+mapa :: (a -> b) -> [a] -> [b]
+mapa _ [] = []
+mapa f (x:xs) = f x:mapa f xs
+```
+
 ## Atividades
 
 ### Atividade 1
