@@ -2,6 +2,25 @@
 
 Programação funcional é um paradigma de programação baseado em funções puras, tendo como principais características a imutabilidade e a ausência de efeitos colaterais.
 
+## Classes de tipos
+
+Essa categoria se refere a um conjunto de tipos que possuem uma característica em comum.
+
+
+
+## Funções
+
+### Função soma
+
+Recebe uma lista de números e retorna a soma dos elementos da lista.
+```haskell
+soma :: Num a => [a] -> a
+soma [] = 0
+soma (x:xs) = x + soma xs
+```
+
+## Atividades
+
 ### Atividade 1
 
 Faça um programa em Haskell que leia três inteiros não negativos, um em cada linha, e se forem correspondentes aos lados de um triângulo, imprima a área utilizando a fórmula de Heron. Caso não seja, imprima “-”. 
@@ -36,4 +55,7 @@ Exemplo 3: entrada: 2 1 10, saída: -
 
 
 </details>
+
+
+
 
