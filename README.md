@@ -127,18 +127,26 @@ Exemplo 3: entrada: 2 1 10, saída: -
 
 ### Atividade 2
 
+Faça um programa em Haskell que leia dois inteiros não negativos, um em cada linha, e imprima o número de inteiros defeituosos, perfeitos e abundantes entre esses números, um em cada linha.
+
+ * Número Perfeito: A soma dos divisores próprios é igual ao número.
+ * Número Abundante: A soma dos divisores próprios é maior que o número.
+ * Número Defeituoso: A soma dos divisores próprios é menor que o número.
+
 <details>
   <summary>🔍 Clique para ver o código</summary>
   
     main = do
-    n1_ <- getLine
-    n2_ <- getLine
-    let n1 = read n1_
-    let n2 = read n2_
-    let l1 = lista n1 n2 
-    putStrLn $ show $ filtra (>10) (mapa soma (mapa divisores l1))
-
-
+        n1_ <- getLine
+        n2_ <- getLine
+        let n1 = read n1_
+        let n2 = read n2_
+        let l1 = lista n1 n2 
+        putStrLn $ show $ conta (<0) $ compara (mapa soma (mapa divisores l1)) l1
+        putStrLn $ show $ conta (==0) $ compara (mapa soma (mapa divisores l1)) l1
+        putStrLn $ show $ conta (>0) $ compara (mapa soma (mapa divisores l1)) l1
+    
+    
     lista :: Int -> Int -> [Int]
     lista a b = [a..b]
     
@@ -147,17 +155,26 @@ Exemplo 3: entrada: 2 1 10, saída: -
     soma (x:xs) = x + soma xs
     
     divisores :: Int -> [Int]
-    divisores n = [x | x <- [1..n], n `mod` x == 0]
+    divisores n = [x | x <- [1..n-1], n `mod` x == 0]
     
     mapa :: (a -> b) -> [a] -> [b]
     mapa _ [] = []
     mapa f (x:xs) = f x: mapa f xs
     
-    filtra :: (a -> Bool) -> [a] -> [a]
-    filtra _ [] = []
-    filtra cond (x:xs)
-        | cond x    = x : filtra cond xs
-        | otherwise = filtra cond xs
+    compara :: (Eq a, Ord a, Num a) => [a] -> [a] -> [a]
+    compara [] [] = []
+    compara (x:xs) (y:ys)
+        | x == y = 0: comp
+        | x > y = 1: comp
+        | otherwise = -1: comp
+            where
+                comp = compara xs ys
+        
+    conta :: (Num a) => (a -> Bool) -> [a] -> a
+    conta _ [] = 0
+    conta cond (x:xs)
+        | cond x = 1 + conta cond xs
+        | otherwise = conta cond xs
 
 
 </details>
