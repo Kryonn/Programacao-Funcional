@@ -125,6 +125,45 @@ Exemplo 3: entrada: 2 1 10, saída: -
 
 </details>
 
+### Atividade 2
+
+<details>
+  <summary>🔍 Clique para ver o código</summary>
+  
+    main = do
+    n1_ <- getLine
+    n2_ <- getLine
+    let n1 = read n1_
+    let n2 = read n2_
+    let l1 = lista n1 n2 
+    putStrLn $ show $ filtra (>10) (mapa soma (mapa divisores l1))
+
+
+    lista :: Int -> Int -> [Int]
+    lista a b = [a..b]
+    
+    soma :: (Num a) => [a] -> a
+    soma [] = 0
+    soma (x:xs) = x + soma xs
+    
+    divisores :: Int -> [Int]
+    divisores n = [x | x <- [1..n], n `mod` x == 0]
+    
+    mapa :: (a -> b) -> [a] -> [b]
+    mapa _ [] = []
+    mapa f (x:xs) = f x: mapa f xs
+    
+    filtra :: (a -> Bool) -> [a] -> [a]
+    filtra _ [] = []
+    filtra cond (x:xs)
+        | cond x    = x : filtra cond xs
+        | otherwise = filtra cond xs
+
+
+</details>
+
+
+
 
 
 
