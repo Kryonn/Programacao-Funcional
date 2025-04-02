@@ -1,4 +1,4 @@
-# Programação Funcional - SSC0960-2025102
+# Programação Funcional - SSC0960
 
 Programação funcional é um paradigma de programação baseado em funções puras, tendo como principais características a imutabilidade e a ausência de efeitos colaterais.
 
