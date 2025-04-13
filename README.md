@@ -179,6 +179,76 @@ Faça um programa em Haskell que leia dois inteiros não negativos, um em cada l
 
 </details>
 
+### Atividade 3
+
+Faça um programa em Haskell, utilizando os conceitos de programação do paradigma funcional, que leia dois inteiros x e y, sendo que x é menor que y, e imprima o comprimento do maior intervalo entre dois números primos consecutivos maiores ou iguais a x e menores ou iguais a y.
+
+<details>
+  <summary>🔍 Clique para ver o código</summary>
+  
+    import Data.Maybe (fromMaybe)
+
+    main = do
+        n1_ <- getLine
+        n2_ <- getLine
+        let n1 = read n1_
+        let n2 = read n2_
+        
+        -- A função fromMaybe permite retornar 0 ao inves de Nothing
+        putStrLn $ show $ fromMaybe 0 $ pegaMaior $ diferenca $ pegaEqto (< n2) $ ignoraEqto (< n1) primos 
+        
+    -- Lista de todos os primos existentes
+    primos = crivo [2..]
+        where
+            crivo (x:xs) = x:(crivo $ filtra ((/=0).(`mod` x)) xs)
+    
+    -- A função diferenca recebe uma lista e
+    -- devolve uma lista com a diferença entre
+    -- números consecutivos
+    diferenca :: (Num a) => [a] -> [a]
+    diferenca [] = []
+    diferenca [_] = []
+    diferenca (x:y:zs) = (y-x):diferenca (y:zs)
+    
+    -- A função pegaMaior recebe uma lista e
+    -- devolve o maior elemento entre eles.
+    -- A função Maybe funciona como um if.
+    -- A função maximum pega o maior elemento da lista
+    pegaMaior :: (Ord a) => [a] -> Maybe a
+    pegaMaior [] = Nothing
+    pegaMaior xs = Just (maximum xs)
+    
+    -- A função filtra recebe uma lista e
+    -- devolve uma lista com os elementos
+    -- que satisfazem a condição
+    filtra :: (a->Bool) -> [a] -> [a]
+    filtra _ [] = []
+    filtra cond (x:xs)
+        | cond x = x:filtra cond xs
+        | otherwise = filtra cond xs
+    
+    -- A função pegaEqto recebe uma lista e
+    -- devolve uma lista com os elementos
+    -- que satisfazem a condição
+    pegaEqto :: (a->Bool) -> [a] -> [a]
+    pegaEqto _ [] = []
+    pegaEqto t (x:xs)
+        | t x = x:pegaEqto t xs
+        | otherwise = []
+    
+    -- A função ignoraEqto recebe uma lista e
+    -- devolve uma lista com os elementos
+    -- que satisfazem a condição
+    ignoraEqto :: (a->Bool) -> [a] -> [a]
+    ignoraEqto _ [] = []
+    ignoraEqto t (x:xs)
+        | t x = ignoraEqto t xs
+        | otherwise = x:xs
+
+
+
+</details>
+
 
 
 
