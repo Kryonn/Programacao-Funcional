@@ -8,7 +8,9 @@ Uma função pura é aquela que não causa efeitos colaterais e que sempre retor
 
 ## Funções da Prelude
 
-Prelude é uma biblioteca que é importada implicitamente, possuindo diversas funções úteis que podem ser usadas sem ser implementadas. Aqui estão algumas funções básicas dessa biblioteca:
+Prelude é uma biblioteca que é importada implicitamente, possuindo diversas funções úteis que podem ser usadas sem ser implementadas.
+
+Aqui estão algumas funções básicas dessa biblioteca:
 
 ### putStrLn
 
