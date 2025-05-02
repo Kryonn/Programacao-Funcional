@@ -104,7 +104,7 @@ No exemplo anterior, por exemplo, o uso de guardas permite com que a função re
 
 ### Exemplos de implementação de funções:
 
-#### reprovado
+#### resultado
 
 Essa função recebe um número que representa a nota de um aluno e retorna uma string que representa o status dele na matéria.
 ```haskell
