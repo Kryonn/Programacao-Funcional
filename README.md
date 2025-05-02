@@ -1,56 +1,10 @@
 # Programação Funcional - SSC0960
 
-Programação funcional é um paradigma de programação baseado em funções puras, tendo como principais características a imutabilidade e a ausência de efeitos colaterais.
+Programação funcional é um paradigma de programação baseado no uso de funções puras, ou seja, funções que sempre retornam o mesmo resultado para os mesmos argumentos e não causam efeitos colaterais. Entre suas principais características estão a imutabilidade, onde os dados não podem ser alterados após sua criação, e a ausência de efeitos colaterais, o que facilita a previsibilidade e a testabilidade do código.
 
-## Classes de tipos
+Além disso, esse paradigma valoriza o uso de funções de ordem superior, recursão no lugar de laços tradicionais, e o tratamento de funções como valores de primeira classe, ou seja, podendo ser passadas como argumentos, retornadas por outras funções e armazenadas em variáveis.
 
-Essa categoria se refere a um conjunto de tipos que possuem uma característica em comum.
-* Eq - Tipos que suportam igualdade ou desigualdade
-* Ord - Tipos ordenáveis
-* Num - Tipos numéricos
-* Show - Tipos que podem ser convertidos para string
-
-## Funções
-
-### Função soma
-
-Recebe uma lista de números e retorna a soma dos elementos da lista.
-```haskell
-soma :: Num a => [a] -> a
-soma [] = 0
-soma (x:xs) = x + soma xs
-```
-
-### Função filtra
-
-Recebe uma condição, uma lista e retorna os valores da lista que satifazem a condição.
-```haskell
-filtra :: (a -> Bool) -> [a] -> [a]
-filtra _ [] = []
-filtra teste (x:xs)
-    | teste x = x:filtra teste xs
-    | otherwise = filtra teste xs
-```
-
-### Função mapa
-
-Recebe uma função, uma lista e retorna a função aplicada em todos os elementos da lista.
-```haskell
-mapa :: (a -> b) -> [a] -> [b]
-mapa _ [] = []
-mapa f (x:xs) = f x:mapa f xs
-```
-
-### Função pertence
-
-Recebe um número, uma lista e retorna um valor booleano que indica se o número está na lista.
-```haskell
-pertence :: (Eq a) => a -> [a] -> Bool
-pertence _ [] = False
-pertence e (x:xs)
-    | x == e = True
-    | otherwise = pertence e xs
-```
+A programação funcional promove um estilo de desenvolvimento mais declarativo, onde se descreve o que deve ser feito, em vez de como fazer, contribuindo para um código mais conciso, modular e fácil de manter.
 
 ## Atividades
 
