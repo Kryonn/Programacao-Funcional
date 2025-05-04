@@ -79,9 +79,7 @@ main = do
     print (concat (map formata_frame entrada))
     print (pontuacao entrada)
     
-data Frame = Strike | Spare Int | Open Int Int deriving Show
-
-data FinalFrame = Final Int Int (Maybe Int) deriving Show
+data Frame = Strike | Spare Int | Open Int Int | Last Int Int (Maybe) deriving Show
 
 leitura :: Int -> IO [Frame]
 leitura 0 = return []
@@ -121,13 +119,12 @@ bonus_strike _ = 0
 
 bonus_spare :: [Frame] -> Int
 bonus_spare [] = 0
---bonus_spare [Strike] = 10
---bonus_spare [Spare a] = a
---bonus_spare [Open a b] = a
+bonus_spare [Strike] = 0
+bonus_spare [Spare a] = 0
+bonus_spare [Open a b] = 0
 bonus_spare (Strike:_) = 10
 bonus_spare (Spare a:_) = a
 bonus_spare (Open a b:_) = a
-bonus_spare _ = 0
 
 formata_frame :: Frame -> String
 formata_frame Strike = "X _ | "
