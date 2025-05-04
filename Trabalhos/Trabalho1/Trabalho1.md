@@ -72,3 +72,65 @@ formata_tupla (a, b)
 formata_placar :: [(Int, Int)] -> [String]
 formata_placar tuplas = map formata_tupla tuplas
 ```
+
+```haskell
+main = do
+    entrada <- leitura 9
+    print (concat (map formata_frame entrada))
+    print (pontuacao entrada)
+    
+data Frame = Strike | Spare Int | Open Int Int deriving Show
+
+data FinalFrame = Final Int Int (Maybe Int) deriving Show
+
+leitura :: Int -> IO [Frame]
+leitura 0 = return []
+leitura n = do
+    jogada1_str <- getLine
+    let jogada1 = read jogada1_str :: Int 
+    frame1 <- verifica_jogada1 jogada1
+    resto <- leitura(n-1)
+    return (frame1 : resto)
+
+verifica_jogada1 :: Int -> IO Frame
+verifica_jogada1 10 = return Strike
+verifica_jogada1 n = do
+    jogada2_str <- getLine
+    let jogada2 = read jogada2_str
+    return (verifica_jogada2 n jogada2)
+    
+verifica_jogada2 :: Int -> Int -> Frame
+verifica_jogada2 n jogada2
+    | n + jogada2 == 10 = Spare n
+    | otherwise = Open n jogada2
+    
+pontuacao :: [Frame] -> Int
+pontuacao [] = 0
+pontuacao (Strike:xs) = 10 + bonus_strike xs + pontuacao xs
+pontuacao (Spare a:xs) = 10 + bonus_spare xs + pontuacao xs
+pontuacao (Open a b:xs) = a + b + pontuacao xs
+
+bonus_strike :: [Frame] -> Int
+bonus_strike [] = 0
+bonus_strike (Strike:Strike:_) = 20
+bonus_strike (Strike:Spare a:_) = 10 + a
+bonus_strike (Strike:Open a b:_) = 10 + a
+bonus_strike (Spare a:_) = 10
+bonus_strike (Open a b:_) = a + b
+bonus_strike _ = 0
+
+bonus_spare :: [Frame] -> Int
+bonus_spare [] = 0
+--bonus_spare [Strike] = 10
+--bonus_spare [Spare a] = a
+--bonus_spare [Open a b] = a
+bonus_spare (Strike:_) = 10
+bonus_spare (Spare a:_) = a
+bonus_spare (Open a b:_) = a
+bonus_spare _ = 0
+
+formata_frame :: Frame -> String
+formata_frame Strike = "X _ | "
+formata_frame (Spare a) = show a ++ " / | "
+formata_frame (Open a b) = show a ++ " " ++ show b ++ " | "
+```
