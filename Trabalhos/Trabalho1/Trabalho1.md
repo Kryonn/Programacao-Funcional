@@ -32,3 +32,43 @@ Saída: 1 4 | 4 5 | 6 / | 5 / | X _ | 0 1 | 7 / | 6 / | X _ | 2 / 6 | 133
 Entrada: 10 10 10 10 10 10 10 10 10 10 10 10
 
 Saída: X _ | X _ | X _ | X _ | X _ | X _ | X _ | X _ | X _ | X X X | 300
+
+## Código
+```haskell
+main = do
+    entrada <- leitura 10
+    putStrLn(concat(formata_placar entrada))
+    putStrLn $ show $ soma_pontuacao entrada 0
+    
+-- FUNÇÕES PARA A LEITURA
+leitura :: Int -> IO [(Int, Int)]
+leitura 0 = return []
+leitura n = do
+    jogada1_str <- getLine
+    let jogada1 = read jogada1_str :: Int 
+    jogada2 <- verifica_jogada1 jogada1
+    resto <- leitura(n-1)
+    return ((jogada1, jogada2) : resto)
+    
+verifica_jogada1 :: Int -> IO Int
+verifica_jogada1 10 = return (-1)
+verifica_jogada1 n = do
+    jogada2_str <- getLine
+    let jogada2 = read jogada2_str :: Int 
+    return (verifica_jogada2 n jogada2)
+    
+verifica_jogada2 :: Int -> Int -> Int
+verifica_jogada2 n m
+    | n + m == 10 = (-2)
+    | otherwise = m
+    
+-- FUNÇÕES PARA PRINTAR O PLACAR
+formata_tupla :: (Int, Int) -> String
+formata_tupla (a, b)
+    | b == -1 = "X _ | "
+    | b == -2 = show a ++ " / | "
+    | otherwise = show a ++ " " ++ show b ++ " | "
+    
+formata_placar :: [(Int, Int)] -> [String]
+formata_placar tuplas = map formata_tupla tuplas
+```
