@@ -33,181 +33,7 @@ Entrada: 10 10 10 10 10 10 10 10 10 10 10 10
 
 Saída: X _ | X _ | X _ | X _ | X _ | X _ | X _ | X _ | X _ | X X X | 300
 
-## Código
-```haskell
-main = do
-    entrada <- leitura 10
-    putStrLn(concat(formata_placar entrada))
-    putStrLn $ show $ soma_pontuacao entrada 0
-    
--- FUNÇÕES PARA A LEITURA
-leitura :: Int -> IO [(Int, Int)]
-leitura 0 = return []
-leitura n = do
-    jogada1_str <- getLine
-    let jogada1 = read jogada1_str :: Int 
-    jogada2 <- verifica_jogada1 jogada1
-    resto <- leitura(n-1)
-    return ((jogada1, jogada2) : resto)
-    
-verifica_jogada1 :: Int -> IO Int
-verifica_jogada1 10 = return (-1)
-verifica_jogada1 n = do
-    jogada2_str <- getLine
-    let jogada2 = read jogada2_str :: Int 
-    return (verifica_jogada2 n jogada2)
-    
-verifica_jogada2 :: Int -> Int -> Int
-verifica_jogada2 n m
-    | n + m == 10 = (-2)
-    | otherwise = m
-    
--- FUNÇÕES PARA PRINTAR O PLACAR
-formata_tupla :: (Int, Int) -> String
-formata_tupla (a, b)
-    | b == -1 = "X _ | "
-    | b == -2 = show a ++ " / | "
-    | otherwise = show a ++ " " ++ show b ++ " | "
-    
-formata_placar :: [(Int, Int)] -> [String]
-formata_placar tuplas = map formata_tupla tuplas
-```
-
-```haskell
-main = do
-    entrada <- leitura 9
-    print (concat (map formata_frame entrada))
-    print (pontuacao entrada)
-    
-data Frame = Strike | Spare Int | Open Int Int | Last Int Int (Maybe) deriving Show
-
-leitura :: Int -> IO [Frame]
-leitura 0 = return []
-leitura n = do
-    jogada1_str <- getLine
-    let jogada1 = read jogada1_str :: Int 
-    frame1 <- verifica_jogada1 jogada1
-    resto <- leitura(n-1)
-    return (frame1 : resto)
-
-verifica_jogada1 :: Int -> IO Frame
-verifica_jogada1 10 = return Strike
-verifica_jogada1 n = do
-    jogada2_str <- getLine
-    let jogada2 = read jogada2_str
-    return (verifica_jogada2 n jogada2)
-    
-verifica_jogada2 :: Int -> Int -> Frame
-verifica_jogada2 n jogada2
-    | n + jogada2 == 10 = Spare n
-    | otherwise = Open n jogada2
-    
-pontuacao :: [Frame] -> Int
-pontuacao [] = 0
-pontuacao (Strike:xs) = 10 + bonus_strike xs + pontuacao xs
-pontuacao (Spare a:xs) = 10 + bonus_spare xs + pontuacao xs
-pontuacao (Open a b:xs) = a + b + pontuacao xs
-
-bonus_strike :: [Frame] -> Int
-bonus_strike [] = 0
-bonus_strike (Strike:Strike:_) = 20
-bonus_strike (Strike:Spare a:_) = 10 + a
-bonus_strike (Strike:Open a b:_) = 10 + a
-bonus_strike (Spare a:_) = 10
-bonus_strike (Open a b:_) = a + b
-bonus_strike _ = 0
-
-bonus_spare :: [Frame] -> Int
-bonus_spare [] = 0
-bonus_spare [Strike] = 0
-bonus_spare [Spare a] = 0
-bonus_spare [Open a b] = 0
-bonus_spare (Strike:_) = 10
-bonus_spare (Spare a:_) = a
-bonus_spare (Open a b:_) = a
-
-formata_frame :: Frame -> String
-formata_frame Strike = "X _ | "
-formata_frame (Spare a) = show a ++ " / | "
-formata_frame (Open a b) = show a ++ " " ++ show b ++ " | "
-```
-codigo funcionando
-```haskell
-main = do
-    entrada <- leitura 10
-    putStrLn (concat (map formata_frame entrada))
-    putStrLn $ show $ pontuacao entrada
-    
-data Frame = Strike | Spare Int | Open Int Int | Last Int Int (Maybe Int) deriving Show
-
-leitura :: Int -> IO [Frame]
-leitura 0 = return []
-leitura 1 = do
-    jogada1_str <- getLine
-    let jogada1 = read jogada1_str :: Int
-    jogada2_str <- getLine
-    let jogada2 = read jogada2_str :: Int
-    if (jogada1 + jogada2 == 10 || jogada1 == 10) then do
-        jogada3_str <- getLine
-        let jogada3 = read jogada3_str :: Int
-        return [Last jogada1 jogada2 (Just jogada3)]
-    else
-        return [Last jogada1 jogada2 Nothing]
-leitura n = do
-    jogada1_str <- getLine
-    let jogada1 = read jogada1_str :: Int
-    if jogada1 == 10 then do
-        resto <- leitura(n-1)
-        return (Strike: resto)
-    else do
-        jogada2_str <- getLine
-        let jogada2 = read jogada2_str :: Int
-        if jogada1 + jogada2 == 10 then do
-            resto <- leitura(n-1)
-            return (Spare jogada1: resto)
-        else do
-            resto <- leitura(n-1)
-            return (Open jogada1 jogada2: resto)
-    
-pontuacao :: [Frame] -> Int
-pontuacao [] = 0
-pontuacao (Strike:xs) = 10 + bonus_strike xs + pontuacao xs
-pontuacao (Spare a:xs) = 10 + bonus_spare xs + pontuacao xs
-pontuacao (Open a b:xs) = a + b + pontuacao xs
-pontuacao (Last a b (Just c):_) = a + b + c
-pontuacao (Last a b Nothing:_) = a + b
-
-bonus_strike :: [Frame] -> Int
-bonus_strike [] = 0
-bonus_strike (Strike:Strike:_) = 20
-bonus_strike (Strike:Spare a:_) = 10 + a
-bonus_strike (Strike:Open a b:_) = 10 + a
-bonus_strike (Strike:Last a b _:_) = 10 + a
-bonus_strike (Spare a:_) = 10
-bonus_strike (Open a b:_) = a + b
-bonus_strike (Last a b _:_) = a + b
-bonus_strike _ = 0
-
-bonus_spare :: [Frame] -> Int
-bonus_spare [] = 0
-bonus_spare [Strike] = 0
-bonus_spare [Spare a] = 0
-bonus_spare [Open a b] = 0
-bonus_spare (Strike:_) = 10
-bonus_spare (Spare a:_) = a
-bonus_spare (Open a b:_) = a
-
-formata_frame :: Frame -> String
-formata_frame Strike = "X _ | "
-formata_frame (Spare a) = show a ++ " / | "
-formata_frame (Open a b) = show a ++ " " ++ show b ++ " | "
-formata_frame (Last 10 10 (Just 10)) = "X X X | "
-formata_frame (Last 10 10 (Just c)) = "X X " ++ show c ++ " | "
-formata_frame (Last 10 b (Just c)) = "X " ++ show b ++ " " ++ show c ++ " | "
-formata_frame (Last a b (Just c)) = show a ++ " / " ++ show c ++ " |"
-formata_frame (Last a b Nothing) = show a ++ " " ++ show b ++ " | "
-```
-\/\/\/\/\/ 100% runcodes \/\/\/\/\/
+## Resolução do Trabalho
 ```haskell
 main = do
     -- A entrada do usuário é dada a partir de uma string,
@@ -230,7 +56,7 @@ main = do
     
     -- Para printar o placar, seguimos os seguinte algoritmo:
     --  1 - Usamos a função map para aplicarmos a formatação de frame
-    --      para todos os frames da lista entrada.
+    --      para todos os elementos da variável entrada.
     --  2 - Concatenamos todos os elementos da lista.
     --  3 - Printamos.
     putStr $ concat $ map formata_frame entrada
@@ -238,57 +64,120 @@ main = do
     -- Para printar a pontuação, apenas aplicamos a função pontuacao
     -- na lista de frames e printamos o resultado
     putStrLn $ show $ pontuacao entrada
+ 
+ 
     
 -- Tipo Frame, podendo ser um Strike, Spare, Open ou Last
 data Frame = Strike | Spare Int | Open Int Int | Last Int Int (Maybe Int) deriving Show
 
 
-converte_frames :: [Int] -> [Frame]
-converte_frames [] = []
-converte_frames [a, b, c] = [Last a b (Just c)]
-converte_frames [a, b] = [Last a b Nothing]
-converte_frames (x:y:xs)
-    | x == 10 = Strike: converte_frames (y:xs)
-    | x + y == 10 = Spare x: converte_frames xs
-    | otherwise = Open x y: converte_frames xs
-    
-pontuacao :: [Frame] -> Int
-pontuacao [] = 0
-pontuacao (Strike:xs) = 10 + bonus_strike xs + pontuacao xs
-pontuacao (Spare a:xs) = 10 + bonus_spare xs + pontuacao xs
-pontuacao (Open a b:xs) = a + b + pontuacao xs
-pontuacao (Last a b (Just c):_) = a + b + c
-pontuacao (Last a b Nothing:_) = a + b
 
+-- converte_frames é uma função que recebe um lista de inteiros,
+-- correpondente a quantidade de pinos derrubados de cada jogada,
+-- e retorna uma lista de frames.
+converte_frames :: [Int] -> [Frame]
+-- Lista vazia retorna lista vazia
+converte_frames [] = []
+-- Lista com três elementos retorna Last (Último frame)
+converte_frames [a, b, c] = [Last a b (Just c)]
+-- Lista com dois elementos retorna Last (Último frame)
+converte_frames [a, b] = [Last a b Nothing]
+-- Para listas com mais elementos:
+converte_frames (x:y:xs)
+    -- Se o primeiro elemento da lista for dez, então é um Strike
+    | x == 10 = Strike: converte_frames (y:xs)
+    -- Se os dois primeiros elementos soma dez, então é um Spare
+    | x + y == 10 = Spare x: converte_frames xs
+    -- Se não for nenhum dos casos anteriores, então é um Open(Jogada normal)
+    | otherwise = Open x y: converte_frames xs
+
+
+
+-- pontuação é uma função que soma a pontuação de todos os frames
+-- e seus respectivos bônus(Strike ou Spare)
+pontuacao :: [Frame] -> Int
+-- Se for um Strike, precisamos somar dez, da jogada feita, mais o
+-- bônus do Strike(pontuação duas jogadas posteriores), mais a chamada recursiva
+-- do resto da lista de frames
+pontuacao (Strike:xs) = 10 + bonus_strike xs + pontuacao xs
+
+-- Se for um Spare, precisamos somar dez, da jogada feita, mais o
+-- bônus do Spare(pontuação da jogada posterior), mais a chamada recursiva
+-- do resto da lista de frames
+pontuacao (Spare a:xs) = 10 + bonus_spare xs + pontuacao xs
+
+-- Se for um Open, precisamos apenas somar a pontuação das duas jogadas
+-- com a chamada recursiva do resto da lista de frames
+pontuacao (Open a b:xs) = a + b + pontuacao xs
+
+-- Se for um Last, precisamos apenas somar a pontuação de cada jogada
+pontuacao [Last a b (Just c)] = a + b + c
+pontuacao [Last a b Nothing] = a + b
+
+-- Caso não caia em nenhum caso anterior, somamos 0
+pontuacao _ = 0
+
+
+
+-- bonus_strike é uma função que, ao receber uma lista de frames,
+-- calcula o valor do bônus de um Strike
 bonus_strike :: [Frame] -> Int
-bonus_strike [] = 0
+
+-- Se forem dois Strikes, então retornamos 20
 bonus_strike (Strike:Strike:_) = 20
+
+-- Se for um Strike e um Spare, então retornamos 10 mais a primeira jogada do Spare
 bonus_strike (Strike:Spare a:_) = 10 + a
+
+-- Se for um Strike e um Open, então retornamos 10 mais a primeira jogada do Open
 bonus_strike (Strike:Open a b:_) = 10 + a
-bonus_strike (Strike:Last a b _:_) = 10 + a
+
+-- Se for um Strike e um Last, então retornamos 10 mais a primeira jogada do Last
+bonus_strike [Strike, Last a _ _] = 10 + a
+
+-- Se for um Spare, então retornamos 10
 bonus_strike (Spare a:_) = 10
+
+-- Se for um Open, retornamos a soma das duas jogadas
 bonus_strike (Open a b:_) = a + b
-bonus_strike (Last a b _:_) = a + b
+
+-- Se for um Last, retornamos a soma das duas jogadas
+bonus_strike [Last a b _] = a + b
+
+-- Caso não caia em nenhum caso anterior, somamos 0
 bonus_strike _ = 0
 
+
+
+-- bonus_strike é uma função que, ao receber uma lista de frames,
+-- calcula o valor do bônus de um Spare
 bonus_spare :: [Frame] -> Int
-bonus_spare [] = 0
+
+-- Se for um Strike, então retornamos 10
 bonus_spare (Strike:_) = 10
+
+-- Se for um Spare, Open ou Last, retornamos o valorda primeira jogada
 bonus_spare (Spare a:_) = a
 bonus_spare (Open a b:_) = a
 bonus_spare [Last a b (Just c)] = a
 bonus_spare [Last a b Nothing] = a
+
+-- Caso não caia em nenhum caso anterior, somamos 0
 bonus_spare _ = 0
 
+
+
+-- formata_frame é uma função que recebe um frame e formata no padrão do placar
 formata_frame :: Frame -> String
+
+-- Se forem Strike, Spare e Open, retornamos as seguinte strings:
 formata_frame Strike = "X _ | "
 formata_frame (Spare a) = show a ++ " / | "
 formata_frame (Open a b) = show a ++ " " ++ show b ++ " | "
+
+-- Se for Last, retornamos as seguintes strings:
 formata_frame (Last 10 10 (Just 10)) = "X X X | "
 formata_frame (Last 10 10 (Just c)) = "X X " ++ show c ++ " | "
-formata_frame (Last 10 b (Just 10)) 
-    | b == 0 = "X " ++ show b ++ " / | "
-    | otherwise = "X " ++ show b ++ " X | "
 formata_frame (Last 10 b (Just c))
     | b + c == 10 = "X " ++ show b ++ " / | "
     | otherwise = "X " ++ show b ++ " " ++ show c ++ " | "
