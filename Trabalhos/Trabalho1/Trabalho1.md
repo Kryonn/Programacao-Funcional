@@ -131,3 +131,79 @@ formata_frame Strike = "X _ | "
 formata_frame (Spare a) = show a ++ " / | "
 formata_frame (Open a b) = show a ++ " " ++ show b ++ " | "
 ```
+codigo funcionando
+```haskell
+main = do
+    entrada <- leitura 10
+    putStrLn (concat (map formata_frame entrada))
+    putStrLn $ show $ pontuacao entrada
+    
+data Frame = Strike | Spare Int | Open Int Int | Last Int Int (Maybe Int) deriving Show
+
+leitura :: Int -> IO [Frame]
+leitura 0 = return []
+leitura 1 = do
+    jogada1_str <- getLine
+    let jogada1 = read jogada1_str :: Int
+    jogada2_str <- getLine
+    let jogada2 = read jogada2_str :: Int
+    if (jogada1 + jogada2 == 10 || jogada1 == 10) then do
+        jogada3_str <- getLine
+        let jogada3 = read jogada3_str :: Int
+        return [Last jogada1 jogada2 (Just jogada3)]
+    else
+        return [Last jogada1 jogada2 Nothing]
+leitura n = do
+    jogada1_str <- getLine
+    let jogada1 = read jogada1_str :: Int
+    if jogada1 == 10 then do
+        resto <- leitura(n-1)
+        return (Strike: resto)
+    else do
+        jogada2_str <- getLine
+        let jogada2 = read jogada2_str :: Int
+        if jogada1 + jogada2 == 10 then do
+            resto <- leitura(n-1)
+            return (Spare jogada1: resto)
+        else do
+            resto <- leitura(n-1)
+            return (Open jogada1 jogada2: resto)
+    
+pontuacao :: [Frame] -> Int
+pontuacao [] = 0
+pontuacao (Strike:xs) = 10 + bonus_strike xs + pontuacao xs
+pontuacao (Spare a:xs) = 10 + bonus_spare xs + pontuacao xs
+pontuacao (Open a b:xs) = a + b + pontuacao xs
+pontuacao (Last a b (Just c):_) = a + b + c
+pontuacao (Last a b Nothing:_) = a + b
+
+bonus_strike :: [Frame] -> Int
+bonus_strike [] = 0
+bonus_strike (Strike:Strike:_) = 20
+bonus_strike (Strike:Spare a:_) = 10 + a
+bonus_strike (Strike:Open a b:_) = 10 + a
+bonus_strike (Strike:Last a b _:_) = 10 + a
+bonus_strike (Spare a:_) = 10
+bonus_strike (Open a b:_) = a + b
+bonus_strike (Last a b _:_) = a + b
+bonus_strike _ = 0
+
+bonus_spare :: [Frame] -> Int
+bonus_spare [] = 0
+bonus_spare [Strike] = 0
+bonus_spare [Spare a] = 0
+bonus_spare [Open a b] = 0
+bonus_spare (Strike:_) = 10
+bonus_spare (Spare a:_) = a
+bonus_spare (Open a b:_) = a
+
+formata_frame :: Frame -> String
+formata_frame Strike = "X _ | "
+formata_frame (Spare a) = show a ++ " / | "
+formata_frame (Open a b) = show a ++ " " ++ show b ++ " | "
+formata_frame (Last 10 10 (Just 10)) = "X X X | "
+formata_frame (Last 10 10 (Just c)) = "X X " ++ show c ++ " | "
+formata_frame (Last 10 b (Just c)) = "X " ++ show b ++ " " ++ show c ++ " | "
+formata_frame (Last a b (Just c)) = show a ++ " / " ++ show c ++ " |"
+formata_frame (Last a b Nothing) = show a ++ " " ++ show b ++ " | "
+```
