@@ -207,3 +207,93 @@ formata_frame (Last 10 b (Just c)) = "X " ++ show b ++ " " ++ show c ++ " | "
 formata_frame (Last a b (Just c)) = show a ++ " / " ++ show c ++ " |"
 formata_frame (Last a b Nothing) = show a ++ " " ++ show b ++ " | "
 ```
+\/\/\/\/\/ 100% runcodes \/\/\/\/\/
+```haskell
+main = do
+    -- A entrada do usuário é dada a partir de uma string,
+    -- por isso usamos getLine para ler a entrada
+    linha <- getLine
+    
+    -- lista_pinos é uma lista de inteiros, que recebe a entrada
+    -- do usuário convertida para uma lista de inteiros.
+    -- A conversão é feita da seguinte maneira:
+    --  1 - Usamos a função word para converter uma string, dividida
+    --      por espaços, em uma lista de strings
+    --  2 - Usamos a função map para aplicar a função read em
+    --      cada elemento da lista de strings, convertendo
+    --      para uma lista de inteiros
+    let lista_pinos = map read (words linha) :: [Int]
+    
+    -- entrada é uma lista de Frame, que recebe a lista de inteiros
+    -- convertida em lista de Frame, a partir da função converte_frames
+    let entrada = converte_frames lista_pinos
+    
+    -- Para printar o placar, seguimos os seguinte algoritmo:
+    --  1 - Usamos a função map para aplicarmos a formatação de frame
+    --      para todos os frames da lista entrada.
+    --  2 - Concatenamos todos os elementos da lista.
+    --  3 - Printamos.
+    putStr $ concat $ map formata_frame entrada
+    
+    -- Para printar a pontuação, apenas aplicamos a função pontuacao
+    -- na lista de frames e printamos o resultado
+    putStrLn $ show $ pontuacao entrada
+    
+-- Tipo Frame, podendo ser um Strike, Spare, Open ou Last
+data Frame = Strike | Spare Int | Open Int Int | Last Int Int (Maybe Int) deriving Show
+
+
+converte_frames :: [Int] -> [Frame]
+converte_frames [] = []
+converte_frames [a, b, c] = [Last a b (Just c)]
+converte_frames [a, b] = [Last a b Nothing]
+converte_frames (x:y:xs)
+    | x == 10 = Strike: converte_frames (y:xs)
+    | x + y == 10 = Spare x: converte_frames xs
+    | otherwise = Open x y: converte_frames xs
+    
+pontuacao :: [Frame] -> Int
+pontuacao [] = 0
+pontuacao (Strike:xs) = 10 + bonus_strike xs + pontuacao xs
+pontuacao (Spare a:xs) = 10 + bonus_spare xs + pontuacao xs
+pontuacao (Open a b:xs) = a + b + pontuacao xs
+pontuacao (Last a b (Just c):_) = a + b + c
+pontuacao (Last a b Nothing:_) = a + b
+
+bonus_strike :: [Frame] -> Int
+bonus_strike [] = 0
+bonus_strike (Strike:Strike:_) = 20
+bonus_strike (Strike:Spare a:_) = 10 + a
+bonus_strike (Strike:Open a b:_) = 10 + a
+bonus_strike (Strike:Last a b _:_) = 10 + a
+bonus_strike (Spare a:_) = 10
+bonus_strike (Open a b:_) = a + b
+bonus_strike (Last a b _:_) = a + b
+bonus_strike _ = 0
+
+bonus_spare :: [Frame] -> Int
+bonus_spare [] = 0
+bonus_spare (Strike:_) = 10
+bonus_spare (Spare a:_) = a
+bonus_spare (Open a b:_) = a
+bonus_spare [Last a b (Just c)] = a
+bonus_spare [Last a b Nothing] = a
+bonus_spare _ = 0
+
+formata_frame :: Frame -> String
+formata_frame Strike = "X _ | "
+formata_frame (Spare a) = show a ++ " / | "
+formata_frame (Open a b) = show a ++ " " ++ show b ++ " | "
+formata_frame (Last 10 10 (Just 10)) = "X X X | "
+formata_frame (Last 10 10 (Just c)) = "X X " ++ show c ++ " | "
+formata_frame (Last 10 b (Just 10)) 
+    | b == 0 = "X " ++ show b ++ " / | "
+    | otherwise = "X " ++ show b ++ " X | "
+formata_frame (Last 10 b (Just c))
+    | b + c == 10 = "X " ++ show b ++ " / | "
+    | otherwise = "X " ++ show b ++ " " ++ show c ++ " | "
+formata_frame (Last a b (Just c)) 
+    | c == 10 = show a ++ " / X | "
+    | otherwise = show a ++ " / " ++ show c ++ " | "
+formata_frame (Last a b Nothing) = show a ++ " " ++ show b ++ " | "
+```
