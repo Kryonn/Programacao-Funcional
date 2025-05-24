@@ -1,3 +1,4 @@
+```haskell
 data Dados = Dados {
     country :: String,
     confirmed :: Int,
@@ -26,6 +27,6 @@ splitComma (c:cs)
     | otherwise = (c : head rest) : tail rest
   where
     rest = splitComma cs
-    
+```
 
     
