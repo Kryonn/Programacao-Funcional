@@ -12,15 +12,6 @@ Prelude é uma biblioteca que é importada implicitamente, possuindo diversas fu
 
 Aqui estão algumas funções básicas dessa biblioteca:
 
-### main
-
-Função principal, onde se executa todas as outras funções.
-
-```haskell
-main = do
-  putStrLn "Hello World"
-```
-
 ### putStrLn
 
 Função que printa uma string.
